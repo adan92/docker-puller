@@ -28,3 +28,7 @@ Example docker-puller configuration
             "myhook1": "restart-container-myhook1.sh"
         }
     }
+
+Example docker container launch
+===============================
+docker run -t -i --name webhook -p 8000:8000 -v scripts:/root/dockerpuller/scripts -v config.json:/root/config.json xorilog/docker-webhook
