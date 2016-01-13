@@ -1,9 +1,8 @@
 {
-    "host": "localhost",
-    "port": 8000,
+    "host": "0.0.0.0",
+    "port": 8080,
     "token": "766h7fqiTpCX6q18CXUAdH3ObHHFvC",
     "hooks": {
-        "hello": "scripts/hello.sh",
 	"testing1": "scripts/testing.sh"
     }
 }
