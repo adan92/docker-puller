@@ -7,7 +7,7 @@ import subprocess
 app = Flask(__name__)
 config = None
 
-@app.route('/', methods=['POST'])
+@app.route("/", methods=['POST'])
 def hook_listen():
     if request.method == 'POST':
         token = request.args.get('token')
@@ -31,9 +31,9 @@ def hook_listen():
             return jsonify(success=False, error="Invalid token"), 400
 
 def load_config():
-    with open('config.json') as config_file:    
+    with open('config.json') as config_file:
         return json.load(config_file)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     config = load_config()
     app.run(host=config.get('host', 'localhost'), port=config.get('port', 8000))
