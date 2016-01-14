@@ -1,0 +1,1 @@
+{ service_name: "--repo_name"@1, docker_image: "--repo_name", version: "--tag"},
