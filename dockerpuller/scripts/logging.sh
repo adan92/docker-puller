@@ -1,4 +1,5 @@
 #!/bin/bash
+echo $* >> logs/ansible-line.store
 TEMP=`getopt --long repo_name:,tag:,push_date: -n 'logging.sh' -- "$@"`
 eval set -- "$TEMP"
 
