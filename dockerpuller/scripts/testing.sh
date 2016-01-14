@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "action here !">> testing.log
+echo "action here !">> logs/testing.log
 echo $* >> logs/testing.log

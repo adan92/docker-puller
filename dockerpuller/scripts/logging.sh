@@ -1,5 +1,4 @@
 #!/bin/bash
-#echo $* >> logs/ansible-line.store
 TEMP=`getopt --long repo_name:,tag:,push_date: -n 'logging.sh' -- "$@"`
 eval set -- "$TEMP"
 # extract options and their arguments.
@@ -26,7 +25,6 @@ while true; do
 done
 
 short_name=$(echo "${repo_name}"|cut -d '/' -f 2)
-echo '{ service_name: "nginx@1", docker_image: "surycat/nginx", version: "0.2.0" }'
 line="{ service_name: "\"${short_name}"@1, docker_image: "\"${repo_name}\"", version: "\"${tag}\""}, "
 echo $push_date >> logs/ansible-line.store 
 echo ${line} >> logs/ansible-line.store
