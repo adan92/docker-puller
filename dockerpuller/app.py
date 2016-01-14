@@ -29,9 +29,9 @@ def hook_listen():
 #                        subprocess.call([hook_value, pretty_request])
 #                        subprocess.call([hook_value, pretty_request])
                         subprocess.call(['scripts/logging.sh',
-                            '--push_date', '{data}'.format(data=data['push_data']['pushed_at']),
-                            '--tag', '{data}'.format(data=data['push_data']['tag']),
-                            '--repo_name', '{data}'.format(data=data['repository']['repo_name'])])
+                            '--push_date={data}'.format(data=data['push_data']['pushed_at']),
+                            '--tag={data}'.format(data=data['push_data']['tag']),
+                            '--repo_name={data}'.format(data=data['repository']['repo_name'])])
                         subprocess.call([hook_value, '{data}'.format(data=data)])
                         return jsonify(success=True), 200
                     except OSError as e:
