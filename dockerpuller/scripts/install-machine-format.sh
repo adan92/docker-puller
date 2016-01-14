@@ -1,5 +1,5 @@
 #!/bin/bash
-TEMP=`getopt --long repo_name:,tag:,push_date: -n 'logging.sh' -- "$@"`
+TEMP=`getopt --long repo_name:,tag:,push_date: -n 'install-machine-format.sh' -- "$@"`
 eval set -- "$TEMP"
 # extract options and their arguments.
 while true; do

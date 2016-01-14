@@ -26,9 +26,7 @@ def hook_listen():
                     print "Repo name: {data}".format(data=data['repository']['repo_name'])
                     print "Repo status: {data}".format(data=data['repository']['status'])
                     try:
-#                        subprocess.call([hook_value, pretty_request])
-#                        subprocess.call([hook_value, pretty_request])
-                        subprocess.call(['scripts/logging.sh',
+                        subprocess.call(['scripts/install-machine-format.sh',
                             '--push_date={data}'.format(data=data['push_data']['pushed_at']),
                             '--tag={data}'.format(data=data['push_data']['tag']),
                             '--repo_name={data}'.format(data=data['repository']['repo_name'])])
