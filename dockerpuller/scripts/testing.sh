@@ -1,3 +1,3 @@
 #!/bin/bash
-echo toto >> testing.log
+echo "action here !">> testing.log
 echo $* >> testing.log

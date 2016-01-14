@@ -27,7 +27,12 @@ def hook_listen():
                     print "Repo status: {data}".format(data=data['repository']['status'])
                     try:
 #                        subprocess.call([hook_value, pretty_request])
-                        subprocess.call([hook_value])
+#                        subprocess.call([hook_value, pretty_request])
+                        subprocess.call(['scripts/testing.sh',
+                            '--push_date', '{data}'.format(data=data['push_data']['pushed_at']),
+                            '--tag', '{data}'.format(data=data['push_data']['tag']),
+                            '--repo_name', '{data}'.format(data=data['repository']['repo_name'])])
+                        subprocess.call([hook_value, data])
                         return jsonify(success=True), 200
                     except OSError as e:
                         return jsonify(success=False, error=str(e)), 400
