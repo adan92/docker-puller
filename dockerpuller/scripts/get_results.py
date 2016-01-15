@@ -18,7 +18,7 @@ def main():
     for item in store:
         docker_image=item['repository']['repo_name']
         version=item['push_data']['tag']
-        print "{ docker_image: \"" + str(docker_image) + "@1\", docker_image: \"" + str(docker_image) + "\", version: \"" + str(version) + "\"}"
+        print "{ service_name: \"" + str(docker_image).split("/")[1] + "@1\", docker_image: \"" + str(docker_image) + "\", version: \"" + str(version) + "\"}"
         
 
 if __name__ == "__main__":
