@@ -1,5 +1,5 @@
 #!/bin/bash
-TEMP=`getopt --long repo_name:,tag:,push_date: -n 'install-machine-format.sh' -- "$@"`
+TEMP="$(getopt --long repo_name:,tag:,push_date: --name "$0" -- "$@")"
 eval set -- "$TEMP"
 # extract options and their arguments.
 while true; do
@@ -25,6 +25,7 @@ while true; do
 done
 
 short_name=$(echo "${repo_name}"|cut -d '/' -f 2)
-line="{ service_name: "\"${short_name}"@1, docker_image: "\"${repo_name}\"", version: "\"${tag}\""}, "
-echo $push_date >> logs/ansible-line.store 
+line="{ service_name: "\"${short_name}"@1\", docker_image: "\"${repo_name}\"", version: "\"${tag}\""}"
+
+#echo ${push_date} >> logs/ansible-line.store
 echo ${line} >> logs/ansible-line.store
