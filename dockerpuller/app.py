@@ -31,6 +31,7 @@ def hook_listen():
                             '--tag={data}'.format(data=data['push_data']['tag']),
                             '--repo_name={data}'.format(data=data['repository']['repo_name'])])
                         subprocess.call([hook_value, '{data}'.format(data=json.dumps(data))])
+                        subprocess.call(['python','scripts/get_results.py'])
                         return jsonify(success=True), 200
                     except OSError as e:
                         return jsonify(success=False, error=str(e)), 400
