@@ -11,40 +11,32 @@ store = []
 def main():
     store_file="logs/testing.log"
     version_patern = re.compile("^\d+\.\d+\.\d+$")
-    services_list = ['xorilog/docker-webhook', 'surycat/wings-appreminder']
+    services_list = ['xorilog/docker-webhook', 'surycat/nginx', 'surycat/ldap', 'surycat/prosody', 'surycat/wings', 'surycat/wings-appreminder', 'surycat/nyuki-idshost', 'surycat/nyuki-appreminder', 'surycat/nyuki-dashboard', 'surycat/nyuki-hlseven', 'surycat/nyuki-infobip', 'surycat/nyuki-smtp', 'surycat/nyuki-thecallr', 'surycat/nyuki-swagger', 'surycat/nyuki-auth', 'surycat/wings-auth', 'surycat/wings-idshost', 'surycat/wings-users']
+
     final_services_list = []
     with open(store_file, 'r') as f_in:
         for line in f_in:
             data = json.loads(line)
             store.append(data)
-#    for item in store:
-#        docker_image=item['repository']['repo_name']
-#        version=item['push_data']['tag']
-#        print "{ service_name: \"" + str(docker_image).split("/")[1] + "@1\", docker_image: \"" + str(docker_image) + "\", version: \"" + str(version) + "\"}"
     temp_dict = dict()
     for i in xrange(len(store)):
-        if store[i]['repository']['repo_name'] not in temp_dict:
-            temp_dict[store[i]['repository']['repo_name']]=[]
-        if store[i]['push_data']['tag'] not in temp_dict[store[i]['repository']['repo_name']]:
-            if version_patern.match(store[i]['push_data']['tag']):
+        if version_patern.match(store[i]['push_data']['tag']):
+            if store[i]['repository']['repo_name'] not in temp_dict:
+                temp_dict[store[i]['repository']['repo_name']]=[]
+            if store[i]['push_data']['tag'] not in temp_dict[store[i]['repository']['repo_name']]:
                 temp_dict[store[i]['repository']['repo_name']].append(store[i]['push_data']['tag'])
     
-    print temp_dict
-    print "Listing Max services"
+#    print temp_dict
+#    print "Listing Max services"
     for service in services_list:
-        final_services_list.append([service, max(temp_dict[service])])
-    print final_services_list
+        if service in temp_dict:
+            final_services_list.append([service, max(temp_dict[service])])
+#    print final_services_list
     print "Surycat configuration for install-machine :"
     for f in final_services_list:
-        for item in store:
-            if (f[0] in item['repository']['repo_name']) and (f[1] in item['push_data']['tag']) :
-                docker_image=item['repository']['repo_name']
-                version=item['push_data']['tag']
-                print "{ service_name: \"" + str(docker_image).split("/")[1] + "@1\", docker_image: \"" + str(docker_image) + "\", version: \"" + str(version) + "\"}"
-#    for item in temp_list:
-#        for i in xrange(len(store)):
-#            if store[i]
-        
+        docker_image=f[0]
+        version=f[1]
+        print "{ service_name: \"" + str(docker_image).split("/")[1] + "@1\", docker_image: \"" + str(docker_image) + "\", version: \"" + str(version) + "\"}"
 
 if __name__ == "__main__":
     main()
