@@ -1,14 +1,22 @@
+# -*- coding: utf-8 -*-
 from flask import Flask
 from flask import request
 from flask import jsonify
 import json
+import click
 import subprocess
+
+
+__version__ = '0.0.15'
+
 
 app = Flask(__name__)
 config = None
 
-@app.route("/", methods=['POST'])
+@app.route("/", methods=['POST', 'GET'])
 def hook_listen():
+    if request.method == 'GET':
+        return 'API Version %s' % __version__
     if request.method == 'POST':
         token = request.args.get('token')
         if token == config['token']:
@@ -42,10 +50,24 @@ def hook_listen():
         else:
             return jsonify(success=False, error="Invalid token"), 400
 
+
 def load_config():
     with open('config.json') as config_file:
         return json.load(config_file)
 
-if __name__ == "__main__":
+
+@click.option('--version', help='Print Version and exit',
+              is_flag=True)
+@click.option('--debug', help='Enable debug option',
+              is_flag=True)
+@click.command()
+def main(debug, version):
+    if version:
+        click.echo(__version__)
+        exit()
     config = load_config()
-    app.run(host=config.get('host', 'localhost'), port=config.get('port', 8000))
+    app.run(host=config.get('host', 'localhost'),
+            port=config.get('port', 8000), debug=debug)
+
+if __name__ == "__main__":
+    main()
