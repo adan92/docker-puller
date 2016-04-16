@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask
 from flask import request
@@ -12,6 +13,7 @@ __version__ = '0.0.16'
 
 app = Flask(__name__)
 config = None
+
 
 @app.route("/", methods=['POST', 'GET'])
 def hook_listen():
