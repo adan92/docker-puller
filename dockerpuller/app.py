@@ -7,7 +7,7 @@ import click
 import subprocess
 
 
-__version__ = '0.0.15'
+__version__ = '0.0.16'
 
 
 app = Flask(__name__)
