@@ -12,45 +12,30 @@ __version__ = '0.0.16'
 
 
 app = Flask(__name__)
-config = None
 
 
-@app.route("/", methods=['POST', 'GET'])
-def hook_listen():
+@app.route("/")
+def main(token, hook):
+    return 'API Version %s' % __version__
+
+
+@app.route("/<token>/<hook>", methods=['POST', 'GET'])
+def hook_listen(token, hook):
+    print "received %s" % request.data
     if request.method == 'GET':
         return 'API Version %s' % __version__
-    if request.method == 'POST':
-        token = request.args.get('token')
-        if token == config['token']:
-            hook = request.args.get('hook')
-            if hook:
-                hook_value = config['hooks'].get(hook)
-                if hook_value:
-                    s = request.data
-                    data = json.loads(s)
-                    print "Push date: {data}".format(data=data['push_data']['pushed_at'])
-                    print "Push images: {data}".format(data=data['push_data']['images'])
-                    print "Push tag: {data}".format(data=data['push_data']['tag'])
-                    print "Repo url: {data}".format(data=data['repository']['repo_url'])
-                    print "Repo visibility: {data}".format(data=data['repository']['is_private'])
-                    print "Repo name: {data}".format(data=data['repository']['repo_name'])
-                    print "Repo status: {data}".format(data=data['repository']['status'])
-                    try:
-                        subprocess.call(['scripts/install-machine-format.sh',
-                            '--push_date={data}'.format(data=data['push_data']['pushed_at']),
-                            '--tag={data}'.format(data=data['push_data']['tag']),
-                            '--repo_name={data}'.format(data=data['repository']['repo_name'])])
-                        subprocess.call([hook_value, '{data}'.format(data=json.dumps(data))])
-                        subprocess.call(['python','scripts/get_results.py'])
-                        return jsonify(success=True), 200
-                    except OSError as e:
-                        return jsonify(success=False, error=str(e)), 400
-                else:
-                    return jsonify(success=False, error="Hook not found"), 404
-            else:
-                return jsonify(success=False, error="Invalid request: missing hook"), 400
-        else:
-            return jsonify(success=False, error="Invalid token"), 400
+    # print dir(request)
+    config = load_config()
+    if token != config['token']:
+        return jsonify(success=False, error="Invalid token"), 403
+    hook_value = config['hooks'].get(hook)
+    if hook_value is None:
+        return jsonify(success=False, error="Hook not found"), 404
+    try:
+        subprocess.call([hook_value])
+        return jsonify(success=True, version=__version__), 200
+    except OSError as e:
+        return jsonify(success=False, error=str(e)), 400
 
 
 def load_config():
@@ -63,7 +48,7 @@ def load_config():
 @click.option('--debug', help='Enable debug option',
               is_flag=True)
 @click.command()
-def main(debug, version):
+def cli(debug, version):
     if version:
         click.echo(__version__)
         exit()
@@ -72,4 +57,4 @@ def main(debug, version):
             port=config.get('port', 8000), debug=debug)
 
 if __name__ == "__main__":
-    main()
+    cli()
