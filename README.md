@@ -31,9 +31,9 @@ In another terminal
     $ curl -H "Content-Type: application/json" -X \
       POST https://676b7fbc.ngrok.io/abc123/testing1 -d @hub.docker.com.test.json
 
-note::
+note:
 
-    You can test it using [ngrok](https://ngrok.com/download).
+You can test it using [ngrok](https://ngrok.com/download).
 
 Once you download it you can run.
 
