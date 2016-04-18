@@ -59,14 +59,67 @@ Example docker-puller configuration
         "port": 8000,
         "token": "abc123",
         "hooks": {
-            "myhook1": "restart-container-myhook1.sh"
+            "myhook1": "commandtorun.sh"
         }
     }
 
 Example docker container launch
 ===============================
 
-docker run -t -i --name webhook \
+(For development purpose, for production algorithm is to be run in the baremetal (for now))
+
+    docker run -t -i --name webhook \
            -p 8000:8000 -v scripts:/root/dockerpuller/scripts
            -v config.json:/root/config.json xorilog/docker-webhook
+
+Instructions to deploy manually with supervisor
+===============================================
+
+This is a first approach, this would be deployed with the installer itself for production environments.
+
+    sudo apt-key -y adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    sudo echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" >> /etc/apt/sources.list.d/docker.list
+    sudo apt-get update -y
+    sudo apt-get install -y python-pip docker-engine supervisor git nginx
+    sudo adduser dockeradmin (how create user with random passwords)
+
+# Docker Puller Service.
+
+    cd /opt
+    git clone git clone https://github.com/vauxoo/docker-puller
+    pip install -r requirements.txt
+
+# Add a chain to the config.json
+
+    +    "token": "TESTCHAIN_ALEATORY_JUST_CREATE_ONE_FOR_YOU",
+
+# Configure Supervisord (commands as root)
+
+    echo "[program:dockerpuller]
+    directory=/opt/docker-puller/dockerpuller/
+    command=/opt/docker-puller/dockerpuller/app.py
+    " > /etc/supervisor/conf.d/dockerpuller.conf
+
+# Now restart supervisor
+
+    service supervisor restart
+    
+# Test What you did.
+
+Go to ip.server.service.running:8080 and you should see the daemon telling you 
+the servide working.
+
+# Mainteinance instructions.
+
+Change version after a release:
+
+    bumpversion patch
+
+test:
+
+    TODO.
+
+Packetize alá python.
+
+    TODO.
 
