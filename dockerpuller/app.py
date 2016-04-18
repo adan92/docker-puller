@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 
 @app.route("/")
-def main(token, hook):
+def main():
     return 'API Version %s' % __version__
 
 
@@ -24,7 +24,6 @@ def hook_listen(token, hook):
     print "received %s" % request.data
     if request.method == 'GET':
         return 'API Version %s' % __version__
-    # print dir(request)
     config = load_config()
     if token != config['token']:
         return jsonify(success=False, error="Invalid token"), 403
