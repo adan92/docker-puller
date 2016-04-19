@@ -5,6 +5,6 @@
     "hooks": {
     	"testing1": "scripts/testing.sh",
     	"urlshortener": "scripts/urlshortener.sh",
-    	"urlshortener": "scripts/deploy-odoo.sh"
+    	"deploy_odoo": "scripts/deploy-odoo.sh"
     }
 }
