@@ -21,29 +21,91 @@ particular script, given a specific hook.
 Manually Test it (For developers)
 =================================
 
-Run the app.
+## Install flask
 
-    $ cd dockerpull
-    $ ./app.py
+```
+$ pip install flask
+Collecting flask
+  Downloading Flask-0.11-py2.py3-none-any.whl (80kB)
+```
 
-In another terminal
+## Run the app.
 
-    $ curl -H "Content-Type: application/json" -X \
-      POST https://676b7fbc.ngrok.io/abc123/testing1 -d @hub.docker.com.test.json
+```
+$ cd dockerpull
+$ ./app.py
+```
 
-note:
+## Post to Webhook
+
+Make sure you are in the directory of the app.py and that you see the file `hub.docker.com.test.json`.
+
+```
+$ curl -H "Content-Type: application/json" -X POST http://localhost/abc123/testing1 -d @hub.docker.com.test.json
+```
+
+## Post through ngrok
 
 You can test it using [ngrok](https://ngrok.com/download).
 
 Once you download it you can run.
 
-    $ unzip downloaded.ngrok.zip
-    $ ./ngrok http 8080
+```
+$ unzip downloaded.ngrok.zip
+$ ./ngrok http 8080
+ngrok by @inconshreveable                                (Ctrl+C to quit)
 
-Go to your broser and test the url the shell returns you.
-Which looks something like this.
+Tunnel Status                 online
+Version                       2.0.25/2.1.1
+Region                        United States (us)
+Web Interface                 http://127.0.0.1:4040
+Forwarding                    http://7181fbfd.ngrok.io -> localhost:8080
+Forwarding                    https://7181fbfd.ngrok.io -> localhost:8080
+```
 
-https://13f008e6.ngrok.io/
+Then, you can make calls locally:
+
+```
+$ curl -H "Content-Type: application/json" -X \
+  POST https://7181fbfd.ngrok.io/abc123/testing1 -d @hub.docker.com.test.json
+```
+
+## Logs from app.py
+
+The output of the execution of the app displays the webhook calls.
+
+```
+$ ./app.py
+ * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+received {"push_data": {"pushed_at": 1460855619, "images": [], "tag": "latest", "pusher": "vauxoo"}, 
+"callback_url": "https://registry.hub.docker.com/u/vauxoo/urlshortener/hook/2cdf030jcie544fhee1342gg0352b12gd/",
+"repository": {"status": "Active", "description": "vx.hg served services.", "is_trusted": true, 
+"full_description": "# urlshortener\nA URL shortening Flask micro website similar to bit.ly \n\nTo launch the 
+application:\n\n    docker build -t urlshortener .\n    docker run -ti -p 5000:5000 
+-v /tmp/var:/app/var urlshortener\n\nTo program on it:\n\n    virtualen -p python3 env\n    . 
+env/bin/activate\n    pip install -r requirements.txt\n", "repo_url": "https://hub.docker.com/r/vauxoo/urlshortener",
+"owner": "vauxoo", "is_official": false, "is_private": false, "name": "urlshortener", "namespace": "vauxoo", 
+"star_count": 0, "comment_count": 0, "date_created": 1460839654, 
+"dockerfile": "FROM python:3.4\nMAINTAINER Vincent Fretin <vincentfretin@ecreall.com>\n\nRUN mkdir -p /app/var\nCOPY
+ . /app/\nRUN addgroup --quiet --gid \"1000\" \"u1000\" && \\\n    adduser \\\n        --shell /bin/bash \\\n    
+--disabled-password \\\n        --force-badname \\\n        --no-create-home \\\n        --uid \"1000\" \\\n
+        --gid \"1000\" \\\n        --gecos '' \\\n        --quiet \\\n        --home \"/app\" \\\n
+        \"u1000\"\nWORKDIR /app\nRUN pip install -r requirements.txt\nRUN chown -R u1000:u1000 
+/app\nUSER u1000\n\nEXPOSE 5000\nVOLUME /app/var\n\nCMD [\"python\", \"main.py\"]\n", 
+"repo_name": "vauxoo/urlshortener"}}
+127.0.0.1 - - [02/Jun/2016 22:46:08] "POST /abc123/testing1 HTTP/1.1" 200 -
+```
+
+## Logs from the Webhook Handler
+
+The logs are created at dockerpuller/scripts/logs/testing.log. You can initially touch the file and tail it.
+
+```
+$ touch dockerpuller/scripts/logs/testing.log
+$ tail -f dockerpuller/scripts/logs/testing.log
+[02/06/16 23:09:39] 127.0.0.1
+[02/06/16 23:10:02] 127.0.0.1
+```
 
 Example web hook configuration
 ==============================

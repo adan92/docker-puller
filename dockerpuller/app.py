@@ -31,7 +31,7 @@ def hook_listen(token, hook):
     if hook_value is None:
         return jsonify(success=False, error="Hook not found"), 404
     try:
-        subprocess.call([hook_value])
+        subprocess.call([hook_value, request.remote_addr])
         return jsonify(success=True, version=__version__), 200
     except OSError as e:
         return jsonify(success=False, error=str(e)), 400
