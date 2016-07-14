@@ -4,7 +4,6 @@
     "token": "abc123",
     "hooks": {
     	"testing1": "scripts/testing.sh",
-    	"urlshortener": "scripts/urlshortener.sh",
-    	"deploy_odoo": "scripts/deploy-odoo.sh"
+    	"urlshortener": "scripts/urlshortener.sh"
     }
 }
