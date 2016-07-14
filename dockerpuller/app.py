@@ -13,22 +13,15 @@ __version__ = '0.0.19'
 
 
 app = Flask(__name__)
-
+config = None
 
 @app.route("/")
 def main():
     return 'API Version %s' % __version__
 
-
-@app.route("/<token>/<hook>", methods=['POST', 'GET'])
+@app.route("/<token>/<hook>", methods=['POST'])
 def hook_listen(token, hook):
-
     print "received %s" % request.data
-
-    if request.method == 'GET':
-        return 'API Version %s' % __version__
-
-    config = load_config()
 
     if token != config['token']:
         return jsonify(success=False, error="Invalid token"), 403
@@ -50,7 +43,7 @@ def load_config():
     with open('config.json') as config_file:
         return json.load(config_file)
 
-
+    
 @click.option('--version', help='Print Version and exit',
               is_flag=True)
 @click.option('--debug', help='Enable debug option',
@@ -61,11 +54,13 @@ def cli(debug, version):
     if version:
         click.echo(__version__)
         exit()
-    config = load_config()
+
     app.run(
         host=config.get('host', 'localhost'),
         port=config.get('port', 8000), debug=debug
     )
 
+config = load_config()
+    
 if __name__ == "__main__":
     cli()
