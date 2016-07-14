@@ -1,7 +1,10 @@
-FROM python:2.7
-ADD dockerpuller /root/dockerpuller
-ADD requirements.txt /root/requirements.txt
-WORKDIR /root/
-RUN pip install -r requirements.txt
-WORKDIR /root/dockerpuller
+FROM python:2.7.12-alpine
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY dockerpuller .
+
 ENTRYPOINT ["python", "app.py"]
