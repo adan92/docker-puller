@@ -1,19 +1,32 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
+import os
+
 import click
 import subprocess
 
+import logging
 from flask import Flask
 from flask import request
 from flask import jsonify
-
+from slack_logger import SlackHandler, SlackFormatter
 
 __version__ = '0.0.19'
 
 
 app = Flask(__name__)
 config = None
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+sh = SlackHandler(username='Celery', icon_emoji=':robot_face:', url=os.environ["SLACK_API_TOKEN"])
+sh.setLevel(logging.DEBUG)
+
+f = SlackFormatter()
+sh.setFormatter(f)
+logger.addHandler(sh)
 
 @app.route("/")
 def main():
@@ -22,8 +35,9 @@ def main():
 @app.route("/<token>/<hook>", methods=['POST'])
 def hook_listen(token, hook):
     print "received %s" % request.data
-
+    logger.info('Se inicio el deploy '.format(request.data))
     if token != config['token']:
+        logger.error("Error con el deploy (Token inválido)")
         return jsonify(success=False, error="Invalid token"), 403
 
     hook_value = config['hooks'].get(hook)
@@ -33,6 +47,7 @@ def hook_listen(token, hook):
 
     try:
         subprocess.call([hook_value, request.remote_addr])
+        logger.info('Se ejecuto exitosamente el deploy ')
         return jsonify(success=True, version=__version__), 200
 
     except OSError as e:
